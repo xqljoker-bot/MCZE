@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <title>MCZGAME · 英雄联盟分部全档案</title>
+    <style>
+        :root {
+            --bg-deep: #080808; --bg-dark: #0d0d0d; --bg-card: #111; --bg-card-hover: #181818;
+            --gold: #b8934f; --gold-light: #c9a96e; --gold-dark: #8b6914; --gold-pale: #d4af6e;
+            --cyan: #0d5e5e; --cyan-light: #1a8a8a; --text-primary: #e0dcd5; --text-secondary: #b0aaa0;
+            --text-muted: #7a7368; --border-subtle: #1a1a1a; --border-gold: #b8934f40;
+            --font-display: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
+            --font-body: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;font-size:16px}
+        body{background:var(--bg-deep);color:var(--text-primary);font-family:var(--font-body);line-height:1.8;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+            background:radial-gradient(ellipse at 50% 0%,rgba(184,147,79,0.03) 0%,transparent 70%),
+            radial-gradient(ellipse at 20% 80%,rgba(0,238,255,0.02) 0%,transparent 60%);
+        }
+        .navbar{position:fixed;top:0;left:0;width:100%;z-index:1000;background:rgba(8,8,8,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-subtle);padding:0 2rem}
+        .navbar.scrolled{background:rgba(8,8,8,0.95);border-bottom-color:var(--border-gold)}
+        .navbar-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+        .nav-logo{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--gold-light);letter-spacing:0.08em;text-decoration:none}
+        .nav-links{display:flex;list-style:none;gap:0.5rem}
+        .nav-links a{color:var(--text-secondary);text-decoration:none;padding:0.5rem 1rem;border-radius:4px;font-size:0.9rem;transition:all 0.3s}
+        .nav-links a:hover{color:#fff;background:rgba(255,255,255,0.05)}
+        .hamburger{display:none;flex-direction:column;cursor:pointer;gap:5px;padding:8px;background:none;border:none;z-index:1001}
+        .hamburger span{display:block;width:26px;height:2px;background:var(--gold-light);border-radius:2px;transition:all 0.3s}
+        .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+        .hamburger.active span:nth-child(2){opacity:0}
+        .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+        .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem}
+        .hero h1{font-family:var(--font-display);font-size:clamp(3rem,8vw,7rem);color:var(--gold-light);text-shadow:0 0 60px rgba(201,169,110,0.5);letter-spacing:0.1em}
+        .section{position:relative;z-index:1;padding:4rem 2rem;max-width:1300px;margin:0 auto}
+        .section-title{font-family:var(--font-display);font-size:2.2rem;color:var(--gold-light);text-align:center;margin-bottom:2rem;letter-spacing:0.1em}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+        .card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:1.8rem;cursor:pointer;transition:all 0.4s;text-align:center}
+        .card:hover{transform:translateY(-6px);border-color:var(--border-gold);box-shadow:0 20px 50px rgba(0,0,0,0.7);background:var(--bg-card-hover)}
+        .avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 1rem;background:linear-gradient(135deg,#1a1a1a,#0d0d0d);border:2px solid var(--border-gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--gold-light)}
+        .modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.9);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:0.3s;padding:1.5rem}
+        .modal-overlay.active{opacity:1;pointer-events:auto}
+        .modal{background:var(--bg-card);border:1px solid var(--border-gold);border-radius:12px;max-width:750px;width:100%;max-height:85vh;overflow-y:auto;padding:2.5rem;position:relative}
+        .modal-close{position:sticky;top:0;float:right;width:36px;height:36px;border-radius:50%;border:1px solid var(--border-gold);background:rgba(0,0,0,0.8);color:var(--gold-light);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+        table{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:0.9rem}
+        th{background:#1a1a1a;color:var(--gold-light);padding:0.8rem;text-align:left;border-bottom:2px solid var(--border-gold)}
+        td{padding:0.8rem;border-bottom:1px solid #222;color:var(--text-secondary)}
+        .ad-bar{position:fixed;bottom:0;left:0;width:100%;z-index:1500;background:rgba(20,20,20,0.97);border-top:1px solid #333;padding:0.8rem;display:flex;justify-content:center;align-items:center;gap:1rem;font-size:0.85rem;flex-wrap:wrap}
+        footer{text-align:center;padding:2rem;color:var(--text-muted);margin-bottom:60px;font-size:0.8rem}
+        @media(max-width:768px){
+            .nav-links{position:fixed;right:-100%;top:0;width:75%;height:100vh;background:rgba(10,10,10,0.97);flex-direction:column;padding:5rem 2rem;transition:right 0.3s;border-left:1px solid var(--border-subtle)}
+            .nav-links.active{right:0}.hamburger{display:flex}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href=" " class="nav-logo">MCZGAME LOL</a >
+            <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">首页</a ></li><li><a href="#players">选手</a ></li><li><a href="#youth">青训</a ></li><li><a href="#battles">战役</a ></li><li><a href="#ranks">排位</a ></li><li><a href="#contact">联系</a ></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div>
+            <p style="color:var(--gold-pale);letter-spacing:0.2em;font-size:1.2rem">MUDANJIANG CREATION ZENITH MANTIONITH</p >
+            <h1>MCZ LOL</h1>
+            <p style="font-size:1.3rem;color:#fff;letter-spacing:0.3em;margin-top:1rem">撕裂峡谷，尽己任</p >
+        </div>
+    </section>
+
+    <section class="section" id="players">
+        <h2 class="section-title">首发阵容</h2>
+        <div class="grid" id="startersGrid"></div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">替补 / 自由人</h2>
+        <div class="grid" id="benchGrid"></div>
+    </section>
+
+    <section class="section" id="youth">
+        <h2 class="section-title">青训选手</h2>
+        <div class="grid" id="youthGrid"></div>
+    </section>
+    <section class="section" id="battles">
+    <h2 class="section-title">经典战役</h2>
+    <div class="grid" id="battlesGrid"></div>
+</section>
+
+<section class="section" id="ranks">
+    <h2 class="section-title">韩服排位数据</h2>
+    <table id="rankTable"></table>
+    <h2 style="margin-top:3rem;color:var(--gold-light)">美服 & 峡谷之巅记录</h2>
+    <div id="extraRecords" style="max-width:800px;margin:1rem auto;color:var(--text-secondary)"></div>
+</section>
+
+<section class="section" id="contact" style="text-align:center">
+    <h2 class="section-title">联系我们</h2>
+    <p>Mudanjiang Creation Zenith Mantionith</p >
+    <p>商务邮箱：<strong>mczesports@111631.xyz</strong></p >
+</section>
+
+<footer>MCZGAME · 英雄联盟分部 · 撕裂峡谷，尽己任</footer>
+<div class="ad-bar">Logitech G502 X PLUS 无线游戏鼠标 · MCZ战队指定外设 <button onclick="this.parentElement.style.display='none'" style="background:#333;border:1px solid #555;color:#ccc;padding:2px 10px;border-radius:4px;cursor:pointer">关闭 ✕</button></div>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <button class="modal-close" onclick="document.getElementById('modal').classList.remove('active')">✕</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const players = [
+        {
+            id:'curagon',name:'MCZ Curagon',role:'上单',initials:'CU',
+            bio:`<h3>死神降临上路</h3><p>原CS分部主狙击手，曾以0.072秒的狙击反应世界纪录闻名。转型英雄联盟后，他将FPS的毫秒级反应与空间预判完美融入上路对决，擅长剑姬、青钢影、贾克斯等高操作战士。他的对线哲学是"和平发育是对上路的侮辱"，场均15分钟单杀2.1次。</p ><p>韩服最高1897分，剑姬熟练度全球前三。在2025年LDL夏季赛，使用剑姬15分钟完成四次单杀，对手上单被当场换下并接受心理辅导。曾与T1上单Zeus交手五局全胜，Zeus评价"他的微操不像人类"。每周仍回CS分部进行狙击反应训练，是全球唯一横跨FPS与MOBA的现役选手。</p >`
+        },
+        {
+            id:'jiuzhe6',name:'MCZ 拯救者6',role:'打野',initials:'拯',
+            bio:`<h3>野区影子杀手</h3><p>原CS突击手，转型打野后以疯狂反野闻名。盲僧胜率79%，场均反野击杀0.9次，被敌方打野称为"恐怖游戏"。招牌英雄盲僧、豹女、螳螂，地图控制能力顶级。</p ><p>2025年NEST淘汰赛对阵EDG.Y，在三线全劣、15分钟落后4300的情况下，使用盲僧R闪开团，三次入侵单杀对方打野，28分钟抢大龙并踢回ADC，带队逆转，参团率94%。与上单Curagon的"上野双煞"组合无需语音沟通即可完成越塔配合。</p >`
+        },
+        {
+            id:'suotomeai',name:'MCZ SuotomeAi',role:'中单',initials:'SA',
+            bio:`<h3>量子态游走大师</h3><p>原CS自由人，战术黑暗核心。转型中单后游走成功率高达92%，被誉为"量子态游走"。不需要视野优势，仅凭对方中单的走位习惯即可判断游走时机。</p ><p>韩服1680分，招牌妖姬、阿狸、塞拉斯。2025年德杯4级盲视野游走下路拿下双杀，对方辅助语音"他到底怎么知道的？！"成为B站热门素材。曾在训练赛中单杀Faker的妖姬，被Faker称赞"走位艺术"。</p >`
+        },
+        {
+            id:'think',name:'MCZ Think当混子',role:'ADC',initials:'混',
+            bio:`<h3>口罩下的传说</h3><p>身份绝密，必须佩戴口罩与兜帽登场。传闻曾是俱乐部数据分析师，因训练赛中莎弥拉表现出色被破格提拔。韩服2103分队内最高，莎弥拉单英雄胜率81%。</p ><p>2025年LDL夏季赛对阵RNG.Y，使用莎弥拉单局两次五杀（24分钟、27分钟），创LDL历史纪录。莎弥拉场均五杀率6%，全球第一。寒冰射手E技能全图侦察使敌方打野零Gank，魔法水晶箭命中率惊人。与辅助ShuiJing"共享大脑"配合，两人在42分钟比赛内仅说20句话便完成多次完美团战。</p >`
+        },
+        {
+            id:'shuijing',name:'MCZ ShuiJing',role:'辅助',initials:'晶',
+            bio:`<h3>水晶先生</h3><p>MCZ青训纯血选手，锤石Q命中率73%，视野得分联赛第一。与Think当混子组合被称为"共享大脑"，无需过多交流即可完成精妙配合。</p ><p>2025年NEST决赛决胜局，盲钩命中敌方隐身ADC，Think瞬间跟进秒杀，两秒终结比赛。身价最高的辅助之一，公开表示"只要Think还在，我就不会离开"。同时还担任青训辅助Xue的导师，传授视野控制哲学。</p >`
+        },
+        {
+            id:'tutu',name:'MCZtutu',role:'替补·自由人',initials:'TU',
+            bio:`<h3>派克的诅咒</h3><p>原首发辅助，因两次派克致命失误被下放。第一次春季赛季后赛，在敌方高地前Q中诺手甩到Think脸上后E走，导致ADC被秒团灭；第二次夏季赛半决赛，决胜团Q中6/0狗熊扔进后排，双C瞬间融化。队内语音"别钩狗熊"片段播放800万，成为经典。此后禁用派克，并拒绝在Think身前五身位内停留，被戏称为"创伤后辅助应激障碍"。现协助青训辅助训练，用亲身惨剧教导后辈。</p >`
+        }
+    ];
+
+    const youth = [
+        { id:'qing',name:'MCZ Qing',role:'上单',initials:'青',bio:'青训海选第一名，风格激进，训练赛曾单杀Curagon。韩服1270分，招牌纳尔，一次1v2反杀成名，被视为上单接班人。' },
+        { id:'chen',name:'MCZ Chen',role:'中单',initials:'晨',bio:'从王者荣耀转项目，日均训练17小时导致腱鞘炎。辛德拉场均单杀1.4次，韩服1120分，SuotomeAi直言"两年后他将取代我"。' },
+        { id:'yin',name:'MCZ Yin',role:'打野',initials:'隐',bio:'前PUBG青训，地图意识极强，能准确预判敌方打野位置。豹女单杀对方打野四次致对手转会，韩服1330分。' },
+        { id:'ming',name:'MCZ Ming',role:'ADC',initials:'明',bio:'原LDL二线队ADC，多次SVP后加入MCZ。卡莎15/2/8夺青训MVP，获Think当混子亲自指导一小时，韩服1010分。' },
+        { id:'xue',name:'MCZ Xue',role:'辅助',initials:'雪',bio:'原数据分析师，为ShuiJing撰写47页视野报告被全部采纳。训练赛锤石Q命中率78%直接转选手，青训唯一女性，韩服870分。' }
+    ];
+
+    const battles = [
+        { title:'双五杀封神', detail:'Think当混子使用莎弥拉，24分钟大龙团斩下五杀，27分钟高地再拿五杀，单局双五杀创LDL历史。最终战绩23/0/5，伤害占比49.7%，对手ADC数据0/9/1。' },
+        { title:'盲僧救世', detail:'拯救者6盲僧在队伍4300经济劣势下，16分钟R闪踢回中单，三次入侵野区单杀打野，28分钟抢大龙并踢回ADC，一波逆转比赛，参团率94%。' },
+        { title:'双子星逆袭', detail:'Curagon剑姬塔下1v3反杀两人，SuotomeAi妖姬秒杀辅助并戏耍五人追击，远古龙团两人左右夹击，合取19杀完成翻盘。' },
+        { title:'87血守家', detail:'LDL总决赛决胜局，Think 0/11、SuotomeAi超鬼、拯救者6隐身，三路被破落后1.3万。ShuiJing锤石盲钩拉ADC进泉水，Curagon奥恩87血撞晕三人守下基地，37分钟反一波夺冠。' }
+    ];
+  function renderCards(containerId, data, type='player') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = data.map(item => {
+                if(type === 'battle') {
+                    return `<div class="card" onclick="openModal('${item.title}','','${item.detail}')"><h3 style="color:var(--gold-light)">${item.title}</h3><p>${item.detail.substring(0,80)}…</p ></div>`;
+                }
+                return `<div class="card" onclick="openModal('${item.name}','${item.role}','${item.bio.replace(/'/g,"&#39;")}')">
+                    <div class="avatar">${item.initials}</div>
+                    <div style="color:#fff;font-weight:700;font-size:1.1rem">${item.name}</div>
+                    <div style="color:var(--gold-pale)">${item.role}</div>
+                </div>`;
+            }).join('');
+        }
+
+        renderCards('startersGrid', players.filter(p=>['curagon','jiuzhe6','suotomeai','think','shuijing'].includes(p.id)));
+        renderCards('benchGrid', [players.find(p=>p.id==='tutu')]);
+        renderCards('youthGrid', youth);
+        renderCards('battlesGrid', battles, 'battle');
+
+        const rankData = [
+            ['MCZ Think当混子','ADC','2103','第3','67%','莎弥拉81%'],
+            ['MCZ Curagon','上单','1897','第12','63%','剑姬'],
+            ['MCZ 拯救者6','打野','1740','第47','61%','盲僧79%'],
+            ['MCZ SuotomeAi','中单','1680','第89','59%','妖姬'],
+            ['MCZ ShuiJing','辅助','1520','第203','56%','锤石73%'],
+            ['MCZ Yin(青)','打野','1330','第880','56%','豹女'],
+            ['MCZ Qing(青)','上单','1270','第1100','54%','纳尔'],
+            ['MCZ Chen(青)','中单','1120','第1800','52%','辛德拉'],
+            ['MCZ Ming(青)','ADC','1010','第2300','51%','卡莎'],
+            ['MCZ Xue(青)','辅助','870','第3500','49%','锤石']
+        ];
+        document.getElementById('rankTable').innerHTML = `<tr><th>选手</th><th>位置</th><th>最高分</th><th>排名</th><th>胜率</th><th>招牌</th></tr>`
+            + rankData.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+
+        document.getElementById('extraRecords').innerHTML = `
+            <p><strong>美服：</strong>Think当混子1950分(第8)，Curagon 1620分(第67)，拯救者6 1480分(第210)。休赛期美服集训Think单日20连胜被误判炸鱼。</p >
+            <p><strong>峡谷之巅S14：</strong>Think当混子2350分登顶，Curagon 2180分上单位第一，拯救者6 2010分打野第二，SuotomeAi 1950中单第三，ShuiJing 1720辅助第一。</p >
+            <p><strong>特殊记录：</strong>拯救者6盲僧BAN率47%；SuotomeAi因游走过多曾被系统判定"挂机"；Think当混子莎弥拉场均五杀率6%全球最高。</p >
+        `;
+
+        function openModal(title, sub, body) {
+            document.getElementById('modalBody').innerHTML = `<h2 style="color:var(--gold-light)">${title}</h2><p style="color:var(--text-muted)">${sub}</p ><div style="margin-top:1rem">${body}</div>`;
+            document.getElementById('modal').classList.add('active');
+        }
+        document.getElementById('modal').addEventListener('click', function(e) { if(e.target === this) this.classList.remove('active'); });
+        document.getElementById('hamburger').addEventListener('click', ()=>{
+            document.getElementById('hamburger').classList.toggle('active');
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+        window.addEventListener('scroll', ()=> document.getElementById('navbar').classList.toggle('scrolled', window.scrollY>50));
+    </script>
+</body>
+</html>
